@@ -10,7 +10,7 @@ AppendFile::AppendFile(std::string filename)
     writtenBytes_(0)
 {
     assert(fp_);
-    ::setbuffer(fp_, buffer_, sizeof(buffer_));
+    // ::setbuffer(fp_, buffer_, sizeof(buffer_));
 }
 
 AppendFile::~AppendFile()

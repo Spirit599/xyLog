@@ -64,6 +64,8 @@ void AsyncLogger::threadFunc()
     BufferVector buffersToWrite;
     buffersToWrite.reserve(16);
 
+    unsigned long long sum = 0;
+
     while(running_)
     {
         assert(newBuffer1 && newBuffer1->length() == 0);
@@ -90,6 +92,7 @@ void AsyncLogger::threadFunc()
         for(const auto& buffer : buffersToWrite)
         {
             output.append(buffer->data(), buffer->length());
+            sum += buffer->length();
         }
 
         if(buffersToWrite.size() > 2)
@@ -115,6 +118,15 @@ void AsyncLogger::threadFunc()
 
         buffersToWrite.clear();
         output.flush();
+    }
+
+
+    //dont lock
+    buffers_.push_back(std::move(currentBuffer_));
+    for(const auto& buffer : buffers_)
+    {
+        output.append(buffer->data(), buffer->length());
+        sum += buffer->length();
     }
     output.flush();
 }
